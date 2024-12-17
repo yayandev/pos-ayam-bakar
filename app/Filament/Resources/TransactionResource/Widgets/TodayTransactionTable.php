@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources\TransactionResource\Widgets;
 
 use App\Models\Transaction;
@@ -16,8 +15,6 @@ class TodayTransactionTable extends BaseWidget
                 Transaction::query()
                     ->whereDate('transaction_date', today())
                     ->orderBy('transaction_date', 'desc')
-                    // ->limit(5)
-                    ->get()
             )
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
@@ -27,5 +24,4 @@ class TodayTransactionTable extends BaseWidget
                 Tables\Columns\TextColumn::make('items_count'),
             ]);
     }
-
 }
