@@ -20,8 +20,16 @@ class TodayTransactionTable extends BaseWidget
                 Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('customer_name'),
                 Tables\Columns\TextColumn::make('transaction_date'),
-                Tables\Columns\TextColumn::make('total_amount'),
-                Tables\Columns\TextColumn::make('items_count'),
+                Tables\Columns\TextColumn::make('total_amount')->money('idr'),
+                Tables\Columns\TextColumn::make('items')->counts('items'),
+            ])->actions([
+                Tables\Actions\ViewAction::make(),
             ]);
-    }
+        }
+
+        //title
+        protected function getTitle(): string
+        {
+            return 'Transaksi Hari Ini';
+        }
 }
