@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Resources\MenuResource\Widgets\TotalMenuWidget;
 use App\Filament\Resources\TransactionResource\Widgets\MonthlyTransactionChartWidget;
 use App\Filament\Resources\TransactionResource\Widgets\RekapTransaksiWidget;
+use App\Filament\Resources\TransactionResource\Widgets\TodayTransactionTable;
 use App\Filament\Resources\TransactionResource\Widgets\TotalTransactionWidget;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
@@ -44,9 +45,11 @@ class DashboardPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                TotalTransactionWidget::class,  // Add the TotalTransactionWidget
-                RekapTransaksiWidget::class,  // Existing widget
-                MonthlyTransactionChartWidget::class  // New widget
+                TotalTransactionWidget::class,
+                RekapTransaksiWidget::class,
+                MonthlyTransactionChartWidget::class,
+                TodayTransactionTable::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,
