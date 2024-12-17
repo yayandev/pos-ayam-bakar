@@ -8,6 +8,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class TodayTransactionTable extends BaseWidget
 {
+
     public function table(Table $table): Table
     {
         return $table
@@ -18,18 +19,12 @@ class TodayTransactionTable extends BaseWidget
             )
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('customer_name'),
+                Tables\Columns\TextColumn::make('customer_name')->searchable(),
                 Tables\Columns\TextColumn::make('transaction_date'),
                 Tables\Columns\TextColumn::make('total_amount')->money('idr'),
                 Tables\Columns\TextColumn::make('items_count')
                 ->label('Items')
                 ->counts('items'),
             ]);
-        }
-
-        //title
-        protected function getTitle(): string
-        {
-            return 'Transaksi Hari Ini';
         }
 }
