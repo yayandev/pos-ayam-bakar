@@ -20,12 +20,11 @@ class TransactionExporter extends Exporter
         return [
             ExportColumn::make('id')
                 ->label('ID'),
-            ExportColumn::make('transaction_date')->label('Tanggal'),
-            ExportColumn::make('total_amount')->label('Total'),
-            ExportColumn::make('customer_name')->label('Customer'),
-            ExportColumn::make('itemsCount')->label('Total Item'),
-            ExportColumn::make('created_at')->label('Dibuat'),
-            ExportColumn::make('updated_at')->label('Diperbarui'),
+            ExportColumn::make('transaction_date'),
+            ExportColumn::make('total_amount'),
+            ExportColumn::make('customer_name'),
+            ExportColumn::make('created_at'),
+            ExportColumn::make('updated_at'),
         ];
     }
 
@@ -41,16 +40,16 @@ class TransactionExporter extends Exporter
     }
 
 
-//     public function getXlsxHeaderCellStyle(): ?Style
-// {
-//     return (new Style())
-//         ->setFontBold()
-//         ->setFontItalic()
-//         ->setFontSize(14)
-//         ->setFontName('Consolas')
-//         ->setFontColor(Color::rgb(255, 255, 77))
-//         ->setBackgroundColor(Color::rgb(0, 0, 0))
-//         ->setCellAlignment(CellAlignment::CENTER)
-//         ->setCellVerticalAlignment(CellVerticalAlignment::CENTER);
-// }
+    public function getXlsxHeaderCellStyle(): ?Style
+{
+    return (new Style())
+        ->setFontBold()
+        ->setFontItalic()
+        ->setFontSize(14)
+        ->setFontName('Consolas')
+        ->setFontColor(Color::rgb(255, 255, 77))
+        ->setBackgroundColor(Color::rgb(0, 0, 0))
+        ->setCellAlignment(CellAlignment::CENTER)
+        ->setCellVerticalAlignment(CellVerticalAlignment::CENTER);
+}
 }
