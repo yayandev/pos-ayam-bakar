@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Menu;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\DB;
@@ -12,11 +13,13 @@ use Livewire\Attributes\Computed;
 
 class POS extends Page
 {
+    use HasPageShield;
     protected static ?string $navigationLabel = 'Point of Sale';
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
     protected static string $view = 'filament.pages.p-o-s';
+
 
     public $menus;
     public $cart = [];

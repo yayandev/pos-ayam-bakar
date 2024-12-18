@@ -2,12 +2,15 @@
 namespace App\Filament\Resources\TransactionResource\Widgets;
 
 use App\Models\Transaction;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 
 class TodayTransactionTable extends BaseWidget
 {
+
+    use HasWidgetShield;
 
     public function table(Table $table): Table
     {

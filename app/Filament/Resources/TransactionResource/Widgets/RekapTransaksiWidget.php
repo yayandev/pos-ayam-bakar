@@ -3,11 +3,14 @@
 namespace App\Filament\Resources\TransactionResource\Widgets;
 
 use App\Models\Transaction; // Make sure to import the Transaction model
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class RekapTransaksiWidget extends BaseWidget
 {
+    use HasWidgetShield;
+
     protected function getStats(): array
     {
         // Calculate the total for today

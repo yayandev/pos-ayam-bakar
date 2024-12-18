@@ -4,10 +4,12 @@ namespace App\Filament\Resources\TransactionResource\Widgets;
 use Filament\Widgets\Actions\Action;
 
 use App\Models\Transaction;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 
 class MonthlyTransactionChartWidget extends ChartWidget
 {
+    use HasWidgetShield;
     protected static ?string $heading = 'Pendapatan Perbulan Tahun Ini' ;
 
     // Mendapatkan data untuk chart

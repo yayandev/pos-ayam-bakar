@@ -4,11 +4,14 @@ namespace App\Filament\Resources\TransactionResource\Widgets;
 
 use App\Models\Menu;
 use App\Models\Transaction;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class TotalTransactionWidget extends BaseWidget
 {
+    use HasWidgetShield;
+
     protected function getStats(): array
     {
         // Get the total count of transactions
