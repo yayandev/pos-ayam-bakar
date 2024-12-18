@@ -34,6 +34,9 @@ class DashboardPanelProvider extends PanelProvider
             ->id('dashboard')
             ->path('dashboard')
             ->login()
+            ->brandLogo(env('APP_URL').'/logo.png')
+            ->brandLogoHeight("55px")
+            ->brandName('POS N.B.S')
             ->colors([
                 'primary' => Color::Red,
                 'secondary' => Color::Gray,

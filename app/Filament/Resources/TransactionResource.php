@@ -21,12 +21,15 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+
 
     public static function form(Form $form): Form
 {
@@ -116,20 +119,23 @@ public static function table(Table $table): Table
 {
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('id')
+            Tables\Columns\TextColumn::make('code_transaction')
                 ->label('Transaction ID')
                 ->searchable(),
             Tables\Columns\TextColumn::make('customer_name')
                 ->searchable(),
             Tables\Columns\TextColumn::make('transaction_date')
                 ->dateTime()
-                ->sortable(),
+                ->sortable()
+                ->label('Tanggal Transaksi'),
             Tables\Columns\TextColumn::make('total_amount')
                 ->money('idr')
                 ->sortable(),
             Tables\Columns\TextColumn::make('items_count')
                 ->label('Items')
                 ->counts('items'),
+            Tables\Columns\TextColumn::make('payment_method')
+                ->searchable(),
         ])
         ->filters([
             // Filter untuk rentang tanggal
@@ -138,11 +144,9 @@ public static function table(Table $table): Table
                 ->form([
                     Forms\Components\DatePicker::make('start_date')
                         ->label('Tanggal Mulai')
-                        // ->default(today()->subMonth()) // Tanggal mulai default 1 bulan yang lalu
                         ->required(),
                     Forms\Components\DatePicker::make('end_date')
                         ->label('Tanggal Akhir')
-                        // ->default(today()) // Tanggal akhir default hari ini
                         ->required(),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
@@ -157,7 +161,7 @@ public static function table(Table $table): Table
         ])
         ->actions([
             Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
         ])
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
@@ -165,8 +169,11 @@ public static function table(Table $table): Table
         ])
         ->headerActions([
             ExportAction::make()->exporter(TransactionExporter::class)
-        ]);
+        ])
+        ->defaultSort('transaction_date', 'desc');
+
 }
+
 
 
 

@@ -15,6 +15,9 @@ return new class extends Migration {
             $table->dateTime('transaction_date');
             $table->decimal('total_amount', 10, 2);
             $table->string('customer_name')->nullable();
+            $table->enum('payment_method', ['cash', 'cashless'])->default('cash');
+            $table->decimal('money_paid', 10, 2)->nullable()->default(0);
+            $table->string('code_transaction')->nullable();
             $table->timestamps();
         });
     }

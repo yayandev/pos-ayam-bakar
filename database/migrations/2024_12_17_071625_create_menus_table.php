@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->string('image')->nullable(); // Tambahkan kolom untuk gambar
+            $table->enum('category', ['makanan', 'minuman'])->default('makanan');
             $table->timestamps();
         });
     }

@@ -12,7 +12,10 @@ class Transaction extends Model
     protected $fillable = [
         'transaction_date',
         'total_amount',
-        'customer_name'
+        'customer_name',
+        'payment_method',
+        'money_paid',
+        'code_transaction'
     ];
 
     protected $casts = [
