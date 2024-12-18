@@ -37,11 +37,7 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'kasir' => 'Kasir',
-                        'owner' => 'Owner',
-                    ])
+                    ->relationship('roles', 'name')
                     ->required(),
             ]);
     }
@@ -54,7 +50,7 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('role'),
+                Tables\Columns\TextColumn::make('roles.name'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
