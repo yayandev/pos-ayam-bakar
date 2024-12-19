@@ -1,9 +1,8 @@
 <x-filament-panels::page>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <x-filament::section>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <!-- Menu Section -->
-            <div class="col-span-3">
+    <div class="flex w-full gap-10 md:gap-5 flex-col-reverse md:flex-row box-border items-start">
+        <!-- Menu Section -->
+        <x-filament::section class="flex-1">
                 <h2 class="text-lg font-bold mb-2">Pilih Menu</h2>
 
                 <!-- Tombol Filter Kategori -->
@@ -24,10 +23,10 @@
                 </div>
 
                 <!-- Daftar Menu -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4  max-h-96 overflow-y-auto gap-5">
                     @forelse ($this->menus as $menu)
                         <div wire:click="addToCart({{ $menu->id }})"
-                            class="bg-white dark:bg-gray-800 shadow rounded hover:bg-gray-100 p-2 text-center cursor-pointer transition-all duration-200 active:scale-95 relative {{ isset($selectedMenus[$menu->id]) ? 'border-4 border-green-500' : '' }}">
+                            class="w-full bg-white dark:bg-gray-800 shadow rounded hover:bg-gray-100 dark:hover:bg-gray-700 p-2 text-center cursor-pointer transition-all duration-200 active:scale-95 relative {{ isset($selectedMenus[$menu->id]) ? 'border-4 border-green-500' : '' }}">
                             <!-- Checkmark icon when selected -->
                             @if (isset($selectedMenus[$menu->id]))
                                 <div
@@ -60,14 +59,12 @@
                         </p>
                     @endforelse
                 </div>
-            </div>
-
+        </x-filament::section>
+        <x-filament::section class="w-full md:w-80">
             <!-- Cart Section -->
-            <div class="col-span-1">
-                <x-filament::section>
                     <h2 class="text-lg font-bold mb-2">Daftar Pesanan</h2>
 
-                    <form wire:submit.prevent="saveTransaction">
+                    <form wire:submit.prevent="saveTransaction space-y-5">
                         <div class="mb-3">
                             <label for="customer" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                                 ID Transaksi
@@ -87,22 +84,9 @@
                             </x-filament::input.wrapper>
                         </div>
 
-                        @if ($paymentMethod == 'cash')
-                            <div class="mb-3">
-                                <label for="moneyPaid"
-                                    class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
-                                    Uang Pembayaran
-                                </label>
-                                <x-filament::input.wrapper>
-                                    <x-filament::input type="number" wire:model.live="moneyPaid"
-                                        placeholder="Masukkan uang pembayaran..." min="0" />
-                                </x-filament::input.wrapper>
-                            </div>
-                        @endif
-
                         <!-- Daftar Pesanan -->
                         @if (count($cart) > 0)
-                            <ul class="mt-4">
+                            <ul class="mt-4 w-full overflow-y-auto max-h-60">
                                 @foreach ($cart as $menuId => $item)
                                     <li class="flex justify-between items-center mb-2 bg-gray-100 p-2 rounded">
                                         <div>
@@ -130,7 +114,7 @@
 
                         <!-- Total dan Kembalian -->
                         <hr class="my-4">
-                        <div class="space-y-2">
+                        <div class="space-y-3">
                             <p class="font-bold text-lg dark:text-white flex justify-between">
                                 <span>Total:</span>
                                 <span>Rp {{ number_format($this->total(), 0, ',', '.') }}</span>
@@ -141,14 +125,25 @@
                                     class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
                                     Metode Pembayaran
                                 </label>
+                                <select name="payment_method" wire:model.live="paymentMethod" id="" class="focus:outline-red-500 w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none dark:bg-gray-800 dark:text-white">
+                                    <option value="" disabled selected>Pilih Metode Pembayaran</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="cashless">Cashless</option>
+                                </select>
+                            </div>
+
+                            @if ($paymentMethod == 'cash')
+                            <div class="mb-3">
+                                <label for="moneyPaid"
+                                    class="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                                    Uang Pembayaran
+                                </label>
                                 <x-filament::input.wrapper>
-                                    <select wire:model.live="paymentMethod"
-                                        class="w-full rounded-md focus:outline-none py-2 px-3">
-                                        <option value="cash">Cash</option>
-                                        <option value="cashless">Cashless</option>
-                                    </select>
+                                    <x-filament::input type="number" wire:model.live="moneyPaid"
+                                        placeholder="Masukkan uang pembayaran..." min="0" />
                                 </x-filament::input.wrapper>
                             </div>
+                            @endif
 
                             @if ($paymentMethod == 'cash')
                                 <p class="font-bold text-lg dark:text-white flex justify-between">
@@ -163,8 +158,6 @@
                             Bayar
                         </x-filament::button>
                     </form>
-                </x-filament::section>
-                </x-filament::card>
-            </div>
+        </x-filament::section>
         </div>
-        </x-filament::page>
+</x-filament::page>

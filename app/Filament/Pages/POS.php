@@ -14,11 +14,17 @@ use Livewire\Attributes\Computed;
 class POS extends Page
 {
     use HasPageShield;
-    protected static ?string $navigationLabel = 'Point of Sale';
+    protected static ?string $navigationLabel = 'Kasir';
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
     protected static string $view = 'filament.pages.p-o-s';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $slug = 'kasir';
+
+    protected static ?string $title = 'Kasir';
 
 
     public $menus;
@@ -33,24 +39,26 @@ class POS extends Page
 
 
     public function generateTransactionCode()
-    {
-        // Ambil tahun sekarang
+{
+    return DB::transaction(function () {
         $year = date('Y');
 
-        // Cari transaksi terakhir yang dibuat di tahun yang sama
+        // Menggunakan nama kolom yang benar (code_transaction)
         $lastTransaction = Transaction::whereYear('transaction_date', $year)
-            ->orderByDesc('id') // Urutkan berdasarkan id
+            ->orderByDesc('id')
+            ->lockForUpdate()
             ->first();
 
-        // Jika tidak ada transaksi, mulai dengan nomor urut 1
-        $nextNumber = $lastTransaction ? (intval(substr($lastTransaction->transaction_code, -4)) + 1) : 1;
+        // Mengambil nomor dari code_transaction, bukan transaction_code
+        $nextNumber = $lastTransaction
+            ? (intval(substr($lastTransaction->code_transaction, -4)) + 1)
+            : 1;
 
-        // Format kode transaksi menjadi 'NBS/{tahun}/{nomor urut}'
         $transactionCode = 'NBS/' . $year . '/' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
         return $transactionCode;
-    }
-
+    });
+}
     public function mount()
     {
         $this->loadMenus();
@@ -161,66 +169,67 @@ class POS extends Page
     }
 
     public function saveTransaction()
-    {
-        // Validate transaction
-        if(count($this->cart) == 0) {
-            Notification::make()->title('Keranjang belanja tidak boleh kosong.')->danger()->send();
-            return;
-        }
-
-        // Handle cashless payment
-        if ($this->paymentMethod == 'cashless') {
-            $this->moneyPaid = $this->total();
-        }
-
-        // Validate cash payment
-        if($this->paymentMethod == 'cash') {
-            if($this->moneyPaid == 0) {
-                Notification::make()->title('Uang yang dibayarkan tidak boleh kosong.')->danger()->send();
-                return;
-            }
-
-            if ($this->moneyPaid < $this->total()) {
-                Notification::make()->title('Uang yang dibayarkan tidak cukup.')->danger()->send();
-                return;
-            }
-        }
-
-        $this->updatedMoneyPaid();
-
-        try {
-            DB::transaction(function () {
-                $transaction = Transaction::create([
-                    'transaction_date' => now(),
-                    'total_amount' => $this->total(),
-                    'customer_name' => $this->customerName ?? '',
-                    'payment_method' => $this->paymentMethod,
-                    'money_paid' => $this->moneyPaid,
-                    'code_transaction' => $this->transactionCode
-                ]);
-
-                foreach ($this->cart as $menuId => $item) {
-                    TransactionItem::create([
-                        'transaction_id' => $transaction->id,
-                        'menu_id' => $menuId,
-                        'quantity' => $item['quantity'],
-                        'price' => $item['price'],
-                    ]);
-                }
-            });
-
-            $this->resetCart();
-            Notification::make()->title('Transaksi Berhasil!')->success()->send();
-
-            return redirect('/dashboard/transactions');
-        } catch (\Exception $e) {
-            Notification::make()
-                ->title('Gagal menyimpan transaksi')
-                ->body($e->getMessage())
-                ->danger()
-                ->send();
-        }
+{
+    // Validasi terlebih dahulu
+    if(count($this->cart) == 0) {
+        Notification::make()->title('Keranjang belanja tidak boleh kosong.')->danger()->send();
+        return;
     }
+
+    if($this->paymentMethod == 'cash' && $this->moneyPaid == 0) {
+        Notification::make()->title('Uang yang dibayarkan tidak boleh kosong.')->danger()->send();
+        return;
+    }
+
+    if($this->paymentMethod == 'cash' && $this->moneyPaid < $this->total()) {
+        Notification::make()->title('Uang yang dibayarkan tidak cukup.')->danger()->send();
+        return;
+    }
+
+    // Set moneyPaid untuk pembayaran cashless
+    if ($this->paymentMethod == 'cashless') {
+        $this->moneyPaid = $this->total();
+    }
+
+    $this->updatedMoneyPaid();
+
+    try {
+        DB::transaction(function () {
+            $transaction = Transaction::create([
+                'transaction_date' => now(),
+                'total_amount' => $this->total(),
+                'customer_name' => $this->customerName ?? '',
+                'payment_method' => $this->paymentMethod,
+                'money_paid' => $this->moneyPaid,
+                'code_transaction' => $this->transactionCode
+            ]);
+
+            foreach ($this->cart as $menuId => $item) {
+                TransactionItem::create([
+                    'transaction_id' => $transaction->id,
+                    'menu_id' => $menuId,
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                ]);
+            }
+        });
+
+        // Pindahkan notifikasi dan redirect ke luar transaction
+        Notification::make()->title('Transaksi Berhasil!')->success()->send();
+        $this->resetCart();
+        // Generate kode transaksi baru setelah reset
+        $this->transactionCode = $this->generateTransactionCode();
+
+        return redirect()->to('/dashboard/transactions');
+
+    } catch (\Exception $e) {
+        Notification::make()
+            ->title('Gagal menyimpan transaksi')
+            ->body($e->getMessage())
+            ->danger()
+            ->send();
+    }
+}
 
     public function resetCart()
     {
