@@ -128,7 +128,7 @@ class DashboardPanelProvider extends PanelProvider
     // POS Page
     if ($user->can('page_POS')) {
         $builder->item(
-            NavigationItem::make('POS')
+            NavigationItem::make('KASIR')
                 ->icon('heroicon-o-shopping-cart')
                 ->url('/dashboard/kasir')
                 ->isActiveWhen(fn () => request()->is('dashboard/kasir*'))
