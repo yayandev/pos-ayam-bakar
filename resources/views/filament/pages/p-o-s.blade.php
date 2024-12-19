@@ -154,7 +154,7 @@
                         </div>
 
                         <!-- Tombol Bayar -->
-                        <x-filament::button wire:click="saveTransaction" type="submit" color="primary" class="w-full">
+                        <x-filament::button wire:click="saveTransaction" type="submit" color="primary" class="w-full mt-3">
                             Bayar
                         </x-filament::button>
                     </form>
