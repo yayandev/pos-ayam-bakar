@@ -6,6 +6,7 @@ use Filament\Widgets\Actions\Action;
 use App\Models\Transaction;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Auth;
 
 class MonthlyTransactionChartWidget extends ChartWidget
 {
@@ -15,12 +16,23 @@ class MonthlyTransactionChartWidget extends ChartWidget
     // Mendapatkan data untuk chart
     protected function getData(): array
     {
+        $user = Auth::user();
+
         // Ambil transaksi per bulan dari tahun sekarng
         $monthlyTransactions = Transaction::query()
             ->selectRaw('MONTH(transaction_date) as month, YEAR(transaction_date) as year, SUM(total_amount) as total')
             ->whereYear('transaction_date', now()->year)
             ->groupBy('month', 'year')
             ->get();
+
+        if($user->hasRole('kasir')) {
+            $monthlyTransactions = Transaction::query()
+            ->selectRaw('MONTH(transaction_date) as month, YEAR(transaction_date) as year, SUM(total_amount) as total')
+            ->whereYear('transaction_date', now()->year)
+            ->where('user_id', $user->id)
+            ->groupBy('month', 'year')
+            ->get();
+        }
 
         // Persiapkan data untuk chart
         $months = [];

@@ -6,14 +6,36 @@
                 <h2 class="text-lg font-bold mb-2">Pilih Menu</h2>
 
                 <!-- Tombol Filter Kategori -->
-                <div class="flex gap-2 mb-4">
+                {{-- <div class="flex gap-2 mb-4">
                     <x-filament::button wire:click="setCategory('makanan')" :color="$currentCategory === 'makanan' ? 'primary' : 'secondary'">
                         Makanan
                     </x-filament::button>
                     <x-filament::button wire:click="setCategory('minuman')" :color="$currentCategory === 'minuman' ? 'primary' : 'secondary'">
                         Minuman
                     </x-filament::button>
+                </div> --}}
+
+                <div class="border-b border-gray-200 mb-3">
+                    <nav class="-mb-px flex space-x-4" aria-label="Tabs">
+                        <!-- Tab Makanan -->
+                        <a href="javascript:void(0);"
+                           wire:click="setCategory('makanan')"
+                           class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                                  {{ $currentCategory === 'makanan' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                            Makanan
+                        </a>
+
+                        <!-- Tab Minuman -->
+                        <a href="javascript:void(0);"
+                           wire:click="setCategory('minuman')"
+                           class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+                                  {{ $currentCategory === 'minuman' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+                            Minuman
+                        </a>
+                    </nav>
                 </div>
+
+
 
                 <!-- Input Pencarian -->
                 <div class="mb-4">

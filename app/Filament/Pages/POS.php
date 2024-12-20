@@ -8,6 +8,7 @@ use App\Models\TransactionItem;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 
@@ -201,7 +202,8 @@ class POS extends Page
                 'customer_name' => $this->customerName ?? '',
                 'payment_method' => $this->paymentMethod,
                 'money_paid' => $this->moneyPaid,
-                'code_transaction' => $this->transactionCode
+                'code_transaction' => $this->transactionCode,
+                'user_id' => Auth::id(),
             ]);
 
             foreach ($this->cart as $menuId => $item) {

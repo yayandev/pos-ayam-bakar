@@ -15,7 +15,8 @@ class Transaction extends Model
         'customer_name',
         'payment_method',
         'money_paid',
-        'code_transaction'
+        'code_transaction',
+        'user_id'
     ];
 
     protected $casts = [

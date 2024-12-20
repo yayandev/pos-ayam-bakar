@@ -6,6 +6,7 @@ use App\Models\Transaction; // Make sure to import the Transaction model
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Auth;
 
 class RekapTransaksiWidget extends BaseWidget
 {
@@ -13,6 +14,7 @@ class RekapTransaksiWidget extends BaseWidget
 
     protected function getStats(): array
     {
+        $user = Auth::user();
         // Calculate the total for today
         $todayTotal = Transaction::whereDate('transaction_date', today())->sum('total_amount');
 
@@ -21,6 +23,12 @@ class RekapTransaksiWidget extends BaseWidget
 
         // Calculate the total for this month
         $monthTotal = Transaction::whereMonth('transaction_date', now()->month)->sum('total_amount');
+
+        if($user->hasRole('kasir')) {
+            $todayTotal = Transaction::whereDate('transaction_date', today())->where('user_id', $user->id)->sum('total_amount');
+            $weekTotal = Transaction::whereBetween('transaction_date', [now()->startOfWeek(), now()->endOfWeek()])->where('user_id', $user->id)->sum('total_amount');
+            $monthTotal = Transaction::whereMonth('transaction_date', now()->month)->where('user_id', $user->id)->sum('total_amount');
+        }
 
 
         return [

@@ -22,7 +22,8 @@ class TransactionFactory extends Factory
             'customer_name' => $this->faker->name,
             'payment_method' => $this->faker->randomElement(['cash', 'cashless']),
             'money_paid' => $this->faker->numberBetween(0, $this->faker->numberBetween(10000, 100000)),
-            'code_transaction' => 'NBS/' . date('Y') . '/' . $this->faker->unique()->numberBetween(1, 99999)
+            'code_transaction' => 'NBS/' . date('Y') . '/' . $this->faker->unique()->numberBetween(1, 99999),
+            'user_id' => \App\Models\User::query()->inRandomOrder()->value('id'),
         ];
     }
 }
