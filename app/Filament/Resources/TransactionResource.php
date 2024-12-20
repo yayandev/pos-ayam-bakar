@@ -23,7 +23,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\User;
 class TransactionResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Transaction::class;
@@ -130,6 +130,41 @@ class TransactionResource extends Resource implements HasShieldPermissions
                     ->form([Forms\Components\DatePicker::make('start_date')->label('Tanggal Mulai')->required(), Forms\Components\DatePicker::make('end_date')->label('Tanggal Akhir')->required()])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query->when($data['start_date'] && $data['end_date'], fn(Builder $query) => $query->whereBetween('transaction_date', [$data['start_date'], $data['end_date']]));
+                    }),
+                //filter by user_id
+                SelectFilter::make('user_id')
+                    ->options(User::pluck('name', 'id'))
+                    ->label('Kasir'),
+
+                //filter by payment_method
+                SelectFilter::make('payment_method')
+                    ->options([
+                        'cash' => 'Cash',
+                        'cashless' => 'Cashless',
+                    ])
+                    ->label('Metode Pembayaran'),
+
+                Filter::make('total_amount')
+                    ->form([
+                        Forms\Components\TextInput::make('min')->label('Minimal'),
+                        Forms\Components\TextInput::make('max')->label('Maksimal'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query
+                            ->when($data['min'], fn(Builder $query) => $query->where('total_amount', '>=', $data['min']))
+                            ->when($data['max'], fn(Builder $query) => $query->where('total_amount', '<=', $data['max']));
+                    }),
+
+                //filter by total_amount
+                Filter::make('total_amount')
+                    ->form([
+                        Forms\Components\TextInput::make('min')->label('Minimal'),
+                        Forms\Components\TextInput::make('max')->label('Maksimal'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        return $query
+                            ->when($data['min'], fn(Builder $query) => $query->where('total_amount', '>=', $data['min']))
+                            ->when($data['max'], fn(Builder $query) => $query->where('total_amount', '<=', $data['max']));
                     }),
             ])
             ->actions([Tables\Actions\ViewAction::make(), Tables\Actions\DeleteAction::make()])

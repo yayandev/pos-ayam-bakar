@@ -24,10 +24,17 @@ class RekapTransaksiWidget extends BaseWidget
         // Calculate the total for this month
         $monthTotal = Transaction::whereMonth('transaction_date', now()->month)->sum('total_amount');
 
+        //total transaksi cash dan cashless
+        $totalCash = Transaction::where('payment_method', 'cash')->sum('total_amount');
+        $totalCashless = Transaction::where('payment_method', 'cashless')->sum('total_amount');
+
+
         if($user->hasRole('kasir')) {
             $todayTotal = Transaction::whereDate('transaction_date', today())->where('user_id', $user->id)->sum('total_amount');
             $weekTotal = Transaction::whereBetween('transaction_date', [now()->startOfWeek(), now()->endOfWeek()])->where('user_id', $user->id)->sum('total_amount');
             $monthTotal = Transaction::whereMonth('transaction_date', now()->month)->where('user_id', $user->id)->sum('total_amount');
+            $totalCash = Transaction::where('payment_method', 'cash')->where('user_id', $user->id)->sum('total_amount');
+            $totalCashless = Transaction::where('payment_method', 'cashless')->where('user_id', $user->id)->sum('total_amount');
         }
 
 
@@ -47,6 +54,13 @@ class RekapTransaksiWidget extends BaseWidget
                 ->color('warning')
                 ->icon('heroicon-o-calendar'),
 
+            Stat::make('Total Pendapatan Cash', 'Rp ' . number_format($totalCash, 2))
+                ->color('success')
+                ->icon('heroicon-o-currency-dollar'),
+
+            Stat::make('Total Pendapatan Cashless', 'Rp ' . number_format($totalCashless, 2))
+                ->color('primary')
+                ->icon('heroicon-o-credit-card'),
         ];
     }
 }
