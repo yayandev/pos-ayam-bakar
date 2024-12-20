@@ -34,6 +34,7 @@ class TodayTransactionTable extends BaseWidget
                 Tables\Columns\TextColumn::make('items_count')
                 ->label('Items')
                 ->counts('items'),
+                Tables\Columns\TextColumn::make('user.name')->searchable()->label('Kasir')->badge(),
             ]);
         }
 
