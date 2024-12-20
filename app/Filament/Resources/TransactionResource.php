@@ -122,7 +122,7 @@ class TransactionResource extends Resource implements HasShieldPermissions
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([Tables\Columns\TextColumn::make('code_transaction')->label('Transaction ID')->searchable(), Tables\Columns\TextColumn::make('customer_name')->searchable(), Tables\Columns\TextColumn::make('transaction_date')->dateTime()->sortable()->label('Tanggal Transaksi'), Tables\Columns\TextColumn::make('total_amount')->money('idr')->sortable(), Tables\Columns\TextColumn::make('items_count')->label('Items')->counts('items'), Tables\Columns\TextColumn::make('payment_method')->searchable()])
+            ->columns([Tables\Columns\TextColumn::make('code_transaction')->label('Transaction ID')->searchable(), Tables\Columns\TextColumn::make('customer_name')->searchable(), Tables\Columns\TextColumn::make('transaction_date')->dateTime()->sortable()->label('Tanggal Transaksi'), Tables\Columns\TextColumn::make('total_amount')->money('idr')->sortable(), Tables\Columns\TextColumn::make('items_count')->label('Items')->counts('items'), Tables\Columns\TextColumn::make('payment_method')->searchable(), Tables\Columns\TextColumn::make('user.name')->searchable()->label('Kasir')->badge()])
             ->filters([
                 // Filter untuk rentang tanggal
                 Tables\Filters\Filter::make('date_range')
