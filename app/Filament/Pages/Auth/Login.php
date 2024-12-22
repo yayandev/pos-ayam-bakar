@@ -14,7 +14,7 @@ class Login extends BaseAuth
             'form' => $this->form(
                 $this->makeForm()
                     ->schema([
-                        $this->getLoginFormComponent(),
+                        $this->getUsernameFormComponent(),
                         $this->getPasswordFormComponent(),
                         $this->getRememberFormComponent(),
                     ])
@@ -23,10 +23,10 @@ class Login extends BaseAuth
         ];
     }
 
-    protected function getLoginFormComponent(): Component
+    protected function getUsernameFormComponent(): Component
     {
-        return TextInput::make('login')
-            ->label('Username or email')
+        return TextInput::make('username')
+            ->label('Username')
             ->required()
             ->autocomplete()
             ->autofocus()
@@ -35,10 +35,8 @@ class Login extends BaseAuth
 
     protected function getCredentialsFromFormData(array $data): array
     {
-        $login_type = filter_var($data['login'], FILTER_VALIDATE_EMAIL ) ? 'email' : 'name';
-
         return [
-            $login_type => $data['login'],
+            'username' => $data['username'],
             'password'  => $data['password'],
         ];
     }
