@@ -20,7 +20,7 @@ Route::get('/transactions/{id}/print', function ($id) {
     ];
 
     // Generate PDF dari view
-    $pdf = Pdf::loadView('print', $data)->setPaper('a5', 'landscape');
+    $pdf = Pdf::loadView('print', $data);
 
     // Set header untuk mencegah download
     return response($pdf->output())
