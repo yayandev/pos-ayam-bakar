@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\MenuResource;
 use App\Filament\Resources\MenuResource\Widgets\TotalMenuWidget;
 use App\Filament\Resources\TransactionResource;
@@ -38,7 +39,7 @@ class DashboardPanelProvider extends PanelProvider
             ->default()
             ->id('dashboard')
             ->path('dashboard')
-            ->login()
+            ->login(Login::class)
             ->brandLogo(env('APP_URL').'/logo.png')
             ->brandLogoHeight("55px")
             ->brandName('POS N.B.S')

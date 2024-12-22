@@ -70,8 +70,9 @@ class MenuResource extends Resource implements HasShieldPermissions
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('category')->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money('idr')
-                    ->sortable(),
+    ->formatStateUsing(fn (string $state): string => 'Rp ' . number_format($state, 0, ',', '.'))
+    ->sortable()
+,
                     Tables\Columns\ImageColumn::make('image')
                     ->disk('public')
                     ->width(50)
