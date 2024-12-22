@@ -54,6 +54,10 @@ class UserResource extends Resource implements HasShieldPermissions
                 Forms\Components\TextInput::make('username')
                     ->required()
                     ->maxLength(255),
+                    Forms\Components\TextInput::make('email')
+                    ->required()
+                    ->email()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
