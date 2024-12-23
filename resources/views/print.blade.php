@@ -38,6 +38,7 @@
     </style>
 </head>
 <body>
+
     <div class="header">
         <h2>Bukti Transaksi</h2>
         <p class="subheader">AYAM BAKAR MADU N.B.S</p>
@@ -48,7 +49,6 @@
         <p><strong>Nama:</strong> {{ $transaction->customer_name }}</p>
         <p><strong>Tanggal:</strong> {{ $transaction->transaction_date->format('d M Y H:i') }}</p>
         <p><strong>Kasir:</strong> {{ $transaction->user->name }}</p>
-        <p><strong>Total:</strong> Rp {{ number_format($transaction->total_amount, 0, ',', '.') }}</p>
         <p><strong>Pembayaran:</strong> {{ ucfirst($transaction->payment_method) }}</p>
     </div>
 
@@ -70,6 +70,10 @@
                     <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
+                <tr>
+                    <td ><strong>Total:</strong></td>
+                    <td colspan="2"><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span></td>
+                </tr>
             </tbody>
         </table>
     </div>
