@@ -53,6 +53,13 @@
             margin: 0;
             padding: 0;
         }
+
+        .border-top {
+            width: 100%;
+            border-top: 1px dashed black;
+            border-collapse: collapse;
+            padding-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -65,16 +72,36 @@
             </p>
             <p class="address">Ds. Pematang Masjid -Kragilan
             </p>
-            <p class="address">Telp/Wa : 087871922271/085217956200</p>
         </div>
 
         <div class="details">
-            <p><strong>ID:</strong> {{ $transaction->code_transaction }}</p>
-            <p><strong>Nama:</strong> {{ $transaction->customer_name }}</p>
-            <p><strong>Tanggal:</strong> {{ $transaction->transaction_date->format('d M Y H:i') }}</p>
-            <p><strong>Kasir:</strong> {{ $transaction->user->name }}</p>
-            <p><strong>Pembayaran:</strong> {{ ucfirst($transaction->payment_method) }}</p>
-
+            <table>
+                <tr>
+                    <td><strong>ID</strong></td>
+                    <td>:</td>
+                    <td>{{ $transaction->code_transaction }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Nama</strong></td>
+                    <td>:</td>
+                    <td>{{ $transaction->customer_name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Tanggal</strong></td>
+                    <td>:</td>
+                    <td >{{ $transaction->transaction_date->format('d M Y H:i') }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Kasir</strong></td>
+                    <td>:</td>
+                    <td>{{ $transaction->user->name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Pembayaran</strong></td>
+                    <td>:</td>
+                    <td>{{ ucfirst($transaction->payment_method) }}</td>
+                </tr>
+            </table>
         </div>
 
         <div class="items">
@@ -91,26 +118,26 @@
                     @foreach ($items as $item)
                     <tr>
                         <td>{{ $item->menu->name }}</td>
-                        <td>{{ $item->quantity }}</td>
+                        <td style="text-align: center;">{{ $item->quantity }}</td>
                         <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
-                    <tr>
+                    <tr class="border-top">
                         <td ><strong>Total</strong></td>
-                       <td>:</td>
+                       <td style="text-align: start">:</td>
                         <td><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span></td>
                     </tr>
                     @if ($transaction->payment_method == 'cash')
                     <tr>
-                       <td ><strong>Uang</strong></td>
-                       <td>:</td>
+                       <td ><strong>Bayar</strong></td>
+                       <td style="text-align: start">:</td>
                        <td><span>Rp</span><span> {{ number_format($transaction->money_paid, 0, ',', '.') }}</td>
                     </tr>
                     @endif
                     @if ($transaction->payment_method == 'cash')
                     <tr>
                        <td ><strong>Kembalian</strong></td>
-                       <td>:</td>
+                       <td style="text-align: start">:</td>
                        <td><span>Rp</span><span> {{ number_format($transaction->money_paid - $transaction->total_amount, 0, ',', '.') }}</td>
                     </tr>
                     @endif
