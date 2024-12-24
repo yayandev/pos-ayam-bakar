@@ -19,13 +19,7 @@ Route::get('/transactions/{id}/print', function ($id) {
         'items' => $transaction->items,
     ];
 
-    // Generate PDF dari view
-    $pdf = Pdf::loadView('print', $data);
-
-    // Set header untuk mencegah download
-    return response($pdf->output())
-        ->header('Content-Type', 'application/pdf')
-        ->header('Content-Disposition', 'inline; filename="bukti-transaksi-' . Str::slug($transaction->code_transaction) . '.pdf"');
+    return view('print', $data);
 });
 
 
