@@ -61,7 +61,7 @@
         <div class="header">
             <h2>Bukti Transaksi</h2>
             <p class="subheader">AYAM BAKAR MADU N.B.S</p>
-            <p class="address">Jl. Raya Sentul - Nyapah Rt. 005/002
+            <p class="address">Jl. Raya Sentul - Nyapah
             </p>
             <p class="address">Ds. Pematang Masjid -Kragilan
             </p>
@@ -96,19 +96,22 @@
                     </tr>
                     @endforeach
                     <tr>
-                        <td colspan="2"><strong>Total:</strong></td>
-                        <td ><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span></td>
+                        <td ><strong>Total</strong></td>
+                       <td>:</td>
+                        <td><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span></td>
                     </tr>
                     @if ($transaction->payment_method == 'cash')
                     <tr>
-                       <td colspan="2"><strong>Uang:</strong></td>
-                       <td ><span>Rp</span><span> {{ number_format($transaction->money_paid, 0, ',', '.') }}</td>
+                       <td ><strong>Uang</strong></td>
+                       <td>:</td>
+                       <td><span>Rp</span><span> {{ number_format($transaction->money_paid, 0, ',', '.') }}</td>
                     </tr>
                     @endif
                     @if ($transaction->payment_method == 'cash')
                     <tr>
-                       <td colspan="2"><strong>Kembalian:</strong></td>
-                       <td ><span>Rp</span><span> {{ number_format($transaction->money_paid - $transaction->total_amount, 0, ',', '.') }}</td>
+                       <td ><strong>Kembalian</strong></td>
+                       <td>:</td>
+                       <td><span>Rp</span><span> {{ number_format($transaction->money_paid - $transaction->total_amount, 0, ',', '.') }}</td>
                     </tr>
                     @endif
                 </tbody>
@@ -117,7 +120,7 @@
 
         <div class="footer">
             <p>Terima kasih atas kunjungan Anda!</p>
-            <p>#Rasa dan Kualitas adalah Prioritas Kami</p>
+            <p style="font-size: 11px">#Rasa dan Kualitas adalah Prioritas Kami</p>
         </div>
     </div>
 
