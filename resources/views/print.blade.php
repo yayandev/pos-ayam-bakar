@@ -117,6 +117,7 @@
 
         <div class="footer">
             <p>Terima kasih atas kunjungan Anda!</p>
+            <p>#Rasa dan Kualitas adalah Prioritas Kami</p>
         </div>
     </div>
 
