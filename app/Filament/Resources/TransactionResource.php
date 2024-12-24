@@ -74,7 +74,6 @@ class TransactionResource extends Resource implements HasShieldPermissions
                                     }),
                                 Forms\Components\TextInput::make('quantity')
                                     ->numeric()
-                                    ->default(1)
                                     ->required()
                                     ->reactive()
                                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
@@ -187,7 +186,7 @@ class TransactionResource extends Resource implements HasShieldPermissions
             })
             ->modalFooterActions([])
             ->modalWidth('4xl'),
-            Tables\Actions\DeleteAction::make()])
+            Tables\Actions\DeleteAction::make(),Tables\Actions\EditAction::make()->color('info')])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make(), ExportBulkAction::make()->exporter(TransactionExporter::class)])
             ->headerActions([ExportAction::make()->exporter(TransactionExporter::class)])
             ->defaultSort('transaction_date', 'desc');

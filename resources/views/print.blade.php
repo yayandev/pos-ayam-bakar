@@ -21,6 +21,7 @@
             width: 100%;
             border-bottom: 1px dashed black;
             border-collapse: collapse;
+            padding-bottom: 5px;
         }
         .header, .footer {
             text-align: center;
@@ -49,6 +50,8 @@
         .address {
             font-size: 14px;
             font-weight: 500;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
@@ -58,7 +61,9 @@
         <div class="header">
             <h2>Bukti Transaksi</h2>
             <p class="subheader">AYAM BAKAR MADU N.B.S</p>
-            <p class="address">Jl. Raya Sentul - Nyapah Rt. 005/002 Ds. Pematang Masjid -Kragilan
+            <p class="address">Jl. Raya Sentul - Nyapah Rt. 005/002
+            </p>
+            <p class="address">Ds. Pematang Masjid -Kragilan
             </p>
             <p class="address">Telp/Wa : 087871922271/085217956200</p>
         </div>
@@ -69,6 +74,7 @@
             <p><strong>Tanggal:</strong> {{ $transaction->transaction_date->format('d M Y H:i') }}</p>
             <p><strong>Kasir:</strong> {{ $transaction->user->name }}</p>
             <p><strong>Pembayaran:</strong> {{ ucfirst($transaction->payment_method) }}</p>
+
         </div>
 
         <div class="items">
@@ -90,9 +96,21 @@
                     </tr>
                     @endforeach
                     <tr>
-                        <td ><strong>Total:</strong></td>
-                        <td colspan="2"><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span></td>
+                        <td colspan="2"><strong>Total:</strong></td>
+                        <td ><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span></td>
                     </tr>
+                    @if ($transaction->payment_method == 'cash')
+                    <tr>
+                       <td colspan="2"><strong>Uang:</strong></td>
+                       <td ><span>Rp</span><span> {{ number_format($transaction->money_paid, 0, ',', '.') }}</td>
+                    </tr>
+                    @endif
+                    @if ($transaction->payment_method == 'cash')
+                    <tr>
+                       <td colspan="2"><strong>Kembalian:</strong></td>
+                       <td ><span>Rp</span><span> {{ number_format($transaction->money_paid - $transaction->total_amount, 0, ',', '.') }}</td>
+                    </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
