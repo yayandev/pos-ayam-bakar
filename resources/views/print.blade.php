@@ -54,6 +54,13 @@
             padding: 0;
         }
 
+        .phone {
+            font-size: 13px;
+            font-weight: 500;
+            margin: 0;
+            padding: 0;
+        }
+
         .border-top {
             width: 100%;
             border-top: 1px dashed black;
@@ -72,12 +79,15 @@
             </p>
             <p class="address">Ds. Pematang Masjid -Kragilan
             </p>
+            <p class="phone">
+                087871922271 / 085217956200
+            </p>
         </div>
 
         <div class="details">
             <table>
                 <tr>
-                    <td><strong>ID</strong></td>
+                    <td><strong>ID Transaksi</strong></td>
                     <td>:</td>
                     <td>{{ $transaction->code_transaction }}</td>
                 </tr>
