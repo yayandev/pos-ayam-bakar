@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+
 class TransactionResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Transaction::class;
@@ -121,10 +122,17 @@ class TransactionResource extends Resource implements HasShieldPermissions
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([Tables\Columns\TextColumn::make('code_transaction')->label('Transaction ID')->searchable(), Tables\Columns\TextColumn::make('customer_name')->searchable(), Tables\Columns\TextColumn::make('transaction_date')->dateTime()->sortable()->label('Tanggal Transaksi'), Tables\Columns\TextColumn::make('total_amount')
-            ->formatStateUsing(fn (string $state): string => 'Rp ' . number_format($state, 0, ',', '.'))
-            ->sortable()
-        , Tables\Columns\TextColumn::make('items_count')->label('Items')->counts('items'), Tables\Columns\TextColumn::make('payment_method')->searchable(), Tables\Columns\TextColumn::make('user.name')->searchable()->label('Kasir')->badge()])
+            ->columns([
+                Tables\Columns\TextColumn::make('code_transaction')->label('Transaction ID')->searchable(),
+                Tables\Columns\TextColumn::make('customer_name')->searchable(),
+                Tables\Columns\TextColumn::make('transaction_date')->dateTime()->sortable()->label('Tanggal Transaksi'),
+                Tables\Columns\TextColumn::make('total_amount')
+                    ->formatStateUsing(fn(string $state): string => 'Rp ' . number_format($state, 0, ',', '.'))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('items_count')->label('Items')->counts('items'),
+                Tables\Columns\TextColumn::make('payment_method')->searchable(),
+                Tables\Columns\TextColumn::make('user.name')->searchable()->label('Kasir')->badge()
+            ])
             ->filters([
                 // Filter untuk rentang tanggal
                 Tables\Filters\Filter::make('date_range')
@@ -169,24 +177,30 @@ class TransactionResource extends Resource implements HasShieldPermissions
                             ->when($data['max'], fn(Builder $query) => $query->where('total_amount', '<=', $data['max']));
                     }),
             ])
-            ->actions([  Tables\Actions\Action::make('view')
-            ->label('View')
-            ->icon('heroicon-o-eye')
-            ->color('secondary')
-            ->modalHeading('Detail Transaksi')
-            ->modalContent(function ($record) {
-                return view('filament.tables.actions.view-transaction', [
-                    'record' => $record
-                ]);
-            })
-            ->modalFooter(function ($record) {
-                return view('filament.tables.actions.transaction-footer', [
-                    'record' => $record
-                ]);
-            })
-            ->modalFooterActions([])
-            ->modalWidth('4xl'),
-            Tables\Actions\DeleteAction::make(),Tables\Actions\EditAction::make()->color('info')])
+            ->actions([
+                Tables\Actions\Action::make('view')
+                    ->label('View')
+                    ->icon('heroicon-o-eye')
+                    ->color('secondary')
+                    ->modalHeading('Detail Transaksi')
+                    ->modalContent(function ($record) {
+                        return view('filament.tables.actions.view-transaction', [
+                            'record' => $record
+                        ]);
+                    })
+                    ->modalFooter(function ($record) {
+                        return view('filament.tables.actions.transaction-footer', [
+                            'record' => $record
+                        ]);
+                    })
+                    ->modalFooterActions([])
+                    ->modalWidth('4xl'),
+                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->color('info')
+                    ->url(fn($record) => "/dashboard/kasir?id={$record->id}")
+
+            ])
             ->bulkActions([Tables\Actions\DeleteBulkAction::make(), ExportBulkAction::make()->exporter(TransactionExporter::class)])
             ->headerActions([ExportAction::make()->exporter(TransactionExporter::class)])
             ->defaultSort('transaction_date', 'desc');
@@ -195,8 +209,8 @@ class TransactionResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-                //
-            ];
+            //
+        ];
     }
 
     public static function getPages(): array

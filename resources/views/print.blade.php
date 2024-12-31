@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +10,12 @@
             display: flex;
             justify-content: center
         }
+
         .container {
             font-family: Arial, sans-serif;
             font-size: 12px;
-            width: 58mm; /* Ukuran kertas thermal */
+            width: 58mm;
+            /* Ukuran kertas thermal */
             margin: 0;
             padding: 10px;
         }
@@ -23,21 +26,29 @@
             border-collapse: collapse;
             padding-bottom: 5px;
         }
-        .header, .footer {
+
+        .header,
+        .footer {
             text-align: center;
             margin-bottom: 10px;
         }
-        .details, .items {
+
+        .details,
+        .items {
             margin-bottom: 10px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             padding: 5px;
             text-align: left;
         }
+
         th {
             border-bottom: 1px dashed black;
         }
@@ -69,6 +80,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -99,7 +111,7 @@
                 <tr>
                     <td><strong>Tanggal</strong></td>
                     <td>:</td>
-                    <td >{{ $transaction->transaction_date->format('d M Y H:i') }}</td>
+                    <td>{{ $transaction->transaction_date->format('d M Y H:i') }}</td>
                 </tr>
                 <tr>
                     <td><strong>Kasir</strong></td>
@@ -126,30 +138,33 @@
                 </thead>
                 <tbody>
                     @foreach ($items as $item)
-                    <tr>
-                        <td>{{ $item->menu->name }}</td>
-                        <td style="text-align: center;">{{ $item->quantity }}</td>
-                        <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
-                    </tr>
+                        <tr>
+                            <td>{{ $item->menu->name }}</td>
+                            <td style="text-align: center;">{{ $item->quantity }}</td>
+                            <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                        </tr>
                     @endforeach
                     <tr class="border-top">
-                        <td ><strong>Total</strong></td>
-                       <td style="text-align: start">:</td>
-                        <td><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span></td>
+                        <td><strong>Total</strong></td>
+                        <td style="text-align: start">:</td>
+                        <td><span>Rp</span><span> {{ number_format($transaction->total_amount, 0, ',', '.') }}</span>
+                        </td>
                     </tr>
                     @if ($transaction->payment_method == 'cash')
-                    <tr>
-                       <td ><strong>Bayar</strong></td>
-                       <td style="text-align: start">:</td>
-                       <td><span>Rp</span><span> {{ number_format($transaction->money_paid, 0, ',', '.') }}</td>
-                    </tr>
+                        <tr>
+                            <td><strong>Bayar</strong></td>
+                            <td style="text-align: start">:</td>
+                            <td><span>Rp</span><span> {{ number_format($transaction->money_paid, 0, ',', '.') }}</td>
+                        </tr>
                     @endif
                     @if ($transaction->payment_method == 'cash')
-                    <tr>
-                       <td ><strong>Kembalian</strong></td>
-                       <td style="text-align: start">:</td>
-                       <td><span>Rp</span><span> {{ number_format($transaction->money_paid - $transaction->total_amount, 0, ',', '.') }}</td>
-                    </tr>
+                        <tr>
+                            <td><strong>Kembalian</strong></td>
+                            <td style="text-align: start">:</td>
+                            <td><span>Rp</span><span>
+                                    {{ number_format($transaction->money_paid - $transaction->total_amount, 0, ',', '.') }}
+                            </td>
+                        </tr>
                     @endif
                 </tbody>
             </table>
@@ -164,6 +179,11 @@
     <script>
         //window print
         window.print()
+
+        window.onafterprint = function() {
+            window.location.href = "/dashboard/kasir"
+        }
     </script>
 </body>
+
 </html>
