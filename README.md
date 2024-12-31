@@ -12,16 +12,20 @@ step 2 setup database
 php artisan migrate
 ```
 
-step 3 setup filament super admin
+step 3 setup admin
 
 ```bash
-php artisan filament:super-admin
+php artisan db:seed
 ```
 
 step 4 setup shield
 
 ```bash
-php artisan shield:setup && php artisan shield:install
+php artisan shield:setup 
+```
+
+```bash
+php artisan shield:install
 ```
 
 step 5 setup storage
