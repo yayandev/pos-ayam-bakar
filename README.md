@@ -21,7 +21,11 @@ php artisan db:seed
 step 4 setup shield
 
 ```bash
-php artisan shield:setup && php artisan shield:install
+php artisan shield:setup 
+```
+
+```bash
+php artisan shield:install
 ```
 
 step 5 setup storage
