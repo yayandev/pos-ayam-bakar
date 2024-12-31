@@ -154,7 +154,7 @@
                                 Uang Pembayaran
                             </label>
                             <x-filament::input.wrapper>
-                                <x-filament::input type="number" wire:model.live="moneyPaid"
+                                <x-filament::input type="text" wire:input="formatMoneyPaid($event.target.value)"
                                     placeholder="Masukkan uang pembayaran..." />
                             </x-filament::input.wrapper>
                         </div>
@@ -163,7 +163,7 @@
                     @if ($paymentMethod == 'cash')
                         <p class="font-bold text-lg dark:text-white flex justify-between">
                             <span>Uang:</span>
-                            <span>Rp {{ number_format($this->moneyPaid, 0, ',', '.') }}</span>
+                            <span>Rp {{ number_format($this->moneyPaid ?? 0, 0, ',', '.') }}</span>
                         </p>
                         <p class="font-bold text-lg dark:text-white flex justify-between">
                             <span>Kembalian:</span>
@@ -193,4 +193,4 @@
             </form>
         </x-filament::section>
     </div>
-    </x-filament::page>
+</x-filament-panels::page>

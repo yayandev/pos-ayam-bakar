@@ -27,15 +27,14 @@ class POS extends Page
 
     protected static ?string $title = 'Kasir';
 
-
     public $menus;
     public $cart = [];
-    public $customerName = ''; // Default customer name
-    public $currentCategory = 'makanan'; // Default kategori
+    public $customerName = '';
+    public $currentCategory = 'makanan';
     public $search = '';
-    public $paymentMethod = 'cash'; // Default payment method
+    public $paymentMethod = 'cash';
     public $moneyPaid;
-    public $selectedMenus = []; // Track selected menus
+    public $selectedMenus = [];
     public $transactionCode;
     public $transactionId;
     public $isEditMode = false;
@@ -46,13 +45,11 @@ class POS extends Page
         return DB::transaction(function () {
             $year = date('Y');
 
-            // Menggunakan nama kolom yang benar (code_transaction)
             $lastTransaction = Transaction::whereYear('transaction_date', $year)
                 ->orderByDesc('id')
                 ->lockForUpdate()
                 ->first();
 
-            // Mengambil nomor dari code_transaction, bukan transaction_code
             $nextNumber = $lastTransaction
                 ? (intval(substr($lastTransaction->code_transaction, -4)) + 1)
                 : 1;
@@ -68,11 +65,40 @@ class POS extends Page
         $this->id = request()->query('id');
 
         $this->loadMenus();
-        $this->customerName = ''; // Set default customer name on page load
+        $this->customerName = '';
 
         $this->transactionCode = $this->generateTransactionCode();
         if ($this->id) {
             $this->loadTransaction($this->id);
+        }
+    }
+
+    public function formatMoneyPaid($value)
+    {
+        // Hapus semua karakter non-digit
+        $cleanValue = preg_replace('/[^0-9]/', '', $value);
+
+        // Konversi ke integer jika ada nilai
+        if ($cleanValue !== '') {
+            $this->moneyPaid = (int)$cleanValue;
+        } else {
+            $this->moneyPaid = null;
+        }
+    }
+
+    public function updatedMoneyPaid($value)
+    {
+        if ($value === '') {
+            $this->moneyPaid = null;
+            return;
+        }
+
+        // Hapus semua karakter non-digit
+        $cleanValue = preg_replace('/[^0-9]/', '', $value);
+
+        // Konversi ke integer jika ada nilai
+        if ($cleanValue !== '') {
+            $this->moneyPaid = (int)$cleanValue;
         }
     }
 
@@ -86,12 +112,10 @@ class POS extends Page
     {
         $this->paymentMethod = $method;
 
-        // Automatically set money paid for cashless
         if ($method == 'cashless') {
             $this->moneyPaid = $this->total();
         }
     }
-
 
     public function loadTransaction($id)
     {
@@ -104,7 +128,6 @@ class POS extends Page
         $this->moneyPaid = $transaction->money_paid;
         $this->isEditMode = true;
 
-        // Mengisi cart dari item transaksi
         $this->cart = $transaction->items->mapWithKeys(function ($item) {
             return [
                 $item->menu_id => [
@@ -115,7 +138,6 @@ class POS extends Page
             ];
         })->toArray();
 
-        // Mengisi selectedMenus dari item transaksi
         $this->selectedMenus = $transaction->items->mapWithKeys(function ($item) {
             return [$item->menu_id => true];
         })->toArray();
@@ -141,16 +163,13 @@ class POS extends Page
     {
         $menu = Menu::find($menuId);
         if ($menu) {
-            // If menu is already selected, toggle selection
             if (isset($this->selectedMenus[$menuId])) {
                 unset($this->selectedMenus[$menuId]);
 
-                // Remove from cart if unchecked
                 if (isset($this->cart[$menuId])) {
                     unset($this->cart[$menuId]);
                 }
             } else {
-                // Select menu and add to cart
                 $this->selectedMenus[$menuId] = true;
 
                 if (isset($this->cart[$menuId])) {
@@ -186,12 +205,6 @@ class POS extends Page
         }
     }
 
-    public function updatedMoneyPaid()
-    {
-        // Ensure money paid is non-negative
-        $this->moneyPaid = max(0, $this->moneyPaid);
-    }
-
     public function total()
     {
         return collect($this->cart)->sum(function ($item) {
@@ -206,28 +219,26 @@ class POS extends Page
 
     public function saveTransaction()
     {
-        // Validasi terlebih dahulu
         if (count($this->cart) == 0) {
             Notification::make()->title('Keranjang belanja tidak boleh kosong.')->danger()->send();
             return;
         }
 
-        if ($this->paymentMethod == 'cash' && $this->moneyPaid <= 0) {
-            Notification::make()->title('Uang yang dibayarkan tidak boleh kosong.')->danger()->send();
-            return;
+        if ($this->paymentMethod == 'cash') {
+            if (empty($this->moneyPaid) || $this->moneyPaid <= 0) {
+                Notification::make()->title('Uang yang dibayarkan tidak boleh kosong.')->danger()->send();
+                return;
+            }
+
+            if ($this->moneyPaid < $this->total()) {
+                Notification::make()->title('Uang yang dibayarkan tidak cukup.')->danger()->send();
+                return;
+            }
         }
 
-        if ($this->paymentMethod == 'cash' && $this->moneyPaid < $this->total()) {
-            Notification::make()->title('Uang yang dibayarkan tidak cukup.')->danger()->send();
-            return;
-        }
-
-        // Set moneyPaid untuk pembayaran cashless
         if ($this->paymentMethod == 'cashless') {
             $this->moneyPaid = $this->total();
         }
-
-        $this->updatedMoneyPaid();
 
         try {
             DB::transaction(function () {
@@ -253,13 +264,10 @@ class POS extends Page
                 }
             });
 
-            // Pindahkan notifikasi dan redirect ke luar transaction
             Notification::make()->title('Transaksi Berhasil!')->success()->send();
             $this->resetCart();
-            // Generate kode transaksi baru setelah reset
             $this->transactionCode = $this->generateTransactionCode();
 
-            // redirect print receipt
             return redirect()->to('transactions/' . $this->transactionId . '/print');
         } catch (\Exception $e) {
             Notification::make()
@@ -276,18 +284,15 @@ class POS extends Page
         $this->moneyPaid = "";
         $this->customerName = '';
         $this->paymentMethod = 'cash';
-        $this->selectedMenus = []; // Reset selected menus
+        $this->selectedMenus = [];
     }
 
     public function orderTransaction()
     {
-        // Validasi terlebih dahulu
         if (count($this->cart) == 0) {
             Notification::make()->title('Keranjang belanja tidak boleh kosong.')->danger()->send();
             return;
         }
-
-        $this->updatedMoneyPaid();
 
         try {
             DB::transaction(function () {
@@ -311,10 +316,8 @@ class POS extends Page
                 }
             });
 
-            // Pindahkan notifikasi dan redirect ke luar transaction
             Notification::make()->title('Transaksi Berhasil!')->success()->send();
             $this->resetCart();
-            // Generate kode transaksi baru setelah reset
             $this->transactionCode = $this->generateTransactionCode();
 
             return redirect()->to('/dashboard/transactions');
@@ -329,18 +332,15 @@ class POS extends Page
 
     public function editTransaction()
     {
-        // Validasi terlebih dahulu
         if (count($this->cart) == 0) {
             Notification::make()->title('Keranjang belanja tidak boleh kosong.')->danger()->send();
             return;
         }
 
-        // Temukan transaksi yang akan diedit
         $transaction = Transaction::findOrFail($this->transactionId);
 
         try {
             DB::transaction(function () use ($transaction) {
-                // Update data transaksi
                 $transaction->update([
                     'total_amount' => $this->total(),
                     'customer_name' => $this->customerName ?? '',
@@ -350,10 +350,8 @@ class POS extends Page
                     'user_id' => Auth::id(),
                 ]);
 
-                // Hapus item transaksi lama sebelum menyimpan item baru
                 $transaction->items()->delete();
 
-                // Simpan item baru
                 foreach ($this->cart as $menuId => $item) {
                     TransactionItem::create([
                         'transaction_id' => $transaction->id,
@@ -377,7 +375,6 @@ class POS extends Page
 
     public function editTransactionAndPrintReceipt()
     {
-        // jika uang pembayaran dan kemblian minus tidak bisa
         if ($this->moneyPaid < $this->total()) {
             Notification::make()->title('Uang pembayaran tidak mencukupi.')->danger()->send();
             return;

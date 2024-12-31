@@ -179,10 +179,6 @@
     <script>
         //window print
         window.print()
-
-        window.onafterprint = function() {
-            window.location.href = "/dashboard/kasir"
-        }
     </script>
 </body>
 
