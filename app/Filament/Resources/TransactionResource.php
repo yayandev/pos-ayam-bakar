@@ -159,23 +159,11 @@ class TransactionResource extends Resource implements HasShieldPermissions
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('view')
-                    ->label('View')
-                    ->icon('heroicon-o-eye')
+                Tables\Actions\Action::make('print')
+                    ->label('Print')
+                    ->icon('heroicon-o-printer')
                     ->color('secondary')
-                    ->modalHeading('Detail Transaksi')
-                    ->modalContent(function ($record) {
-                        return view('filament.tables.actions.view-transaction', [
-                            'record' => $record
-                        ]);
-                    })
-                    ->modalFooter(function ($record) {
-                        return view('filament.tables.actions.transaction-footer', [
-                            'record' => $record
-                        ]);
-                    })
-                    ->modalFooterActions([])
-                    ->modalWidth('4xl'),
+                    ->url(fn($record) => "/transactions/{$record->id}/print"),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn() => auth()->user()->can('delete_transaction')),
                 Tables\Actions\EditAction::make()
